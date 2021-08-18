@@ -5,8 +5,11 @@ const spaceships = []
  */
 function setup () {
 	createCanvas(windowWidth, windowHeight)
-	background(0, 25, 60)
+  createShips()
+}
 
+function createShips () {
+	background(0, 25, 60)
   for (let i = 0; i < random(30, 100); i++) {
     new Spaceship()
   }
@@ -16,6 +19,15 @@ function setup () {
  * "Game loop"
  */
 function draw () {
+}
+
+/**
+ * Handle keypress
+ */
+function keyPressed () {
+  if (keyCode === 32) {
+    createShips()
+  }
 }
 
 /**
@@ -32,7 +44,6 @@ class Spaceship {
   }
 
   draw () {
-    draw()
     rotate(this.rotation)
     rect(this.x, this.y, this.size, this.size / 3)
   }
