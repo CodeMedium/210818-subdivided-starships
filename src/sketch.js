@@ -1,16 +1,18 @@
 const spaceships = []
+let maxShips
 
 /**
  * Sketch entry point
  */
 function setup () {
+  maxShips = random(30, 100)
 	createCanvas(windowWidth, windowHeight)
   createShips()
 }
 
 function createShips () {
 	background(0, 25, 60)
-  for (let i = 0; i < random(30, 100); i++) {
+  for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
 }
@@ -63,7 +65,7 @@ class Spaceship {
     
     // Setup properties and maybe create children
     divisions.forEach((division, i) => {
-      divisions[i].isDivided = random() > .5
+      divisions[i].isDivided = random() > (.5 + depth / 10)
       divisions[i].fill = [random(255), random(255), random(255)]
       divisions[i].width = parent.width / 2
       divisions[i].height = parent.height / 2
@@ -83,9 +85,10 @@ class Spaceship {
     divisions[3].y = parent.y + parent.height / 2
 
     // Setup children
+    ++depth
     divisions.forEach((division, i) => {
       if (divisions[i].isDivided && depth < 4) {
-        divisions[i].children = this.subdivide(++depth)
+        divisions[i].children = this.subdivide(depth, divisions[i])
       }
     })
     
@@ -102,9 +105,10 @@ class Spaceship {
     children.forEach(child => {
       fill(child.fill)
       rect(child.x, child.y, child.width, child.height)
-      console.log(child.x, child.y, child.width, child.height)
-    })
 
-    children.children && this.drawChildren(children.children)
+      if (child.children) {
+        this.drawChildren(child.children)
+      }
+    })
   }
 }
