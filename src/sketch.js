@@ -140,7 +140,10 @@ class Spaceship {
       this.x -= this.speed
       circle(this.x, this.y + this.height / 2, this.height)
     }
-    
+
+    // Wrap elements around
+    this.wrap(this)
+
     // Draw subdivisions
     this.updateChildren(this.children)
   }
@@ -149,10 +152,9 @@ class Spaceship {
    * Recursively update children
    */
   updateChildren (children) {
-
-    
     children.forEach(child => {
       child.x += this.dome.flip ? this.speed : -this.speed
+      this.wrap(child)
       fill(child.fill)
       rect(child.x, child.y, child.width, child.height)
       
@@ -160,5 +162,16 @@ class Spaceship {
         this.updateChildren(child.children)
       }
     })
+  }
+
+  /**
+   * Wraps the ship around the window
+   * @fixme Because we use rotation, the x/y isn't relative to the viewport. I have no idea how to fix this 😅
+   */
+  wrap (target) {
+    if (target.x < -windowWidth * 2) target.x = windowWidth * 2
+    if (target.x > windowWidth * 2) target.x = -windowWidth * 2
+    if (target.y < -windowHeight * 2) target.y = windowHeight * 2
+    if (target.y > windowHeight * 2) target.y = -windowHeight * 2
   }
 }
