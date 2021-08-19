@@ -1,8 +1,8 @@
 # Subdivided Starships v1 - Static ships
 
-**Demo:** https://openprocessing.org/sketch/1245889
+![subdivided-starships](https://user-images.githubusercontent.com/89111078/130154355-61ea5a7b-bca0-489f-9f27-6d4641485b3d.png)
 
----
+**Demo:** https://openprocessing.org/sketch/1245889
 
 ## Controls
 - Click - Regenerates the sketch
