@@ -15,7 +15,7 @@ const bgColor = [0, 25, 60]
  * Sketch entry point
  */
 function setup () {
-  maxShips = random(75, 150)
+  maxShips = random(20, 50)
   createCanvas(windowWidth, windowHeight)
   createShips()
 }
@@ -193,19 +193,24 @@ class Spaceship {
     noFill()
 
     // Top to bottom gradient
+    let widthMod = 0
     if (this.dome.flip) {
-      for (let i = x + w; i > x; i--) {
+      for (let i = x + w * 2; i > x; i--) {
         let inter = map(i, x + w, x, 0, 1)
         let c = lerpColor(c1, c2, inter)
         stroke(c)
-        line(i - w, y, i - w, y + h)
+
+        widthMod += .1
+        line(i - w, y - widthMod, i - w, y + h + widthMod)
       }
     } else {
-      for (let i = x; i <= x + w; i++) {
+      for (let i = x - w; i <= x + w * 2; i++) {
         let inter = map(i, x, x + w, 0, 1)
         let c = lerpColor(c1, c2, inter)
         stroke(c)
-        line(i + w, y, i + w, y + h)
+
+        widthMod += .1
+        line(i + w, y - widthMod, i + w, y + h + widthMod)
       }
     }
   }
