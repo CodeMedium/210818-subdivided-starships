@@ -1,9 +1,9 @@
 /**
- * Subdivided Starships
+ * Subdivided Starships v2
  * Started: 8/18/21
- * By: Semi @SemiGenerative
+ * By: The Code Medium @thecodemedium
  *
- * This is the first in a series to reproduce the art on the cover of "Code as Creative Medium" by Golan Levin and Tega Brain
+ * This is the 2nd in a series to reproduce the art on the cover of "Code as Creative Medium" by Golan Levin and Tega Brain
  */
 
 let spaceships = []
@@ -130,8 +130,11 @@ class Spaceship {
     rotate(this.rotation)
     strokeWeight(1)
     
+    // Draw the exhaust
+    this.drawExhaust()
     
     // Draw the dome
+    stroke(0)
     fill(this.dome.color)
     if (this.dome.flip) {
       this.x += this.speed
@@ -173,5 +176,37 @@ class Spaceship {
     if (target.x > windowWidth * 2) target.x = -windowWidth * 2
     if (target.y < -windowHeight * 2) target.y = windowHeight * 2
     if (target.y > windowHeight * 2) target.y = -windowHeight * 2
+  }
+
+  /**
+   * Draws the exhaust behind a ship
+   * @see https://p5js.org/examples/color-linear-gradient.html
+   */
+  drawExhaust () {
+    let x = this.x
+    let y = this.y
+    let w = this.width
+    let h = this.height
+    let c1 = color([44, 122, 232, 90])
+    let c2 = color([0, 25, 60, 0])
+    
+    noFill()
+
+    // Top to bottom gradient
+    if (this.dome.flip) {
+      for (let i = x + w; i > x; i--) {
+        let inter = map(i, x + w, x, 0, 1)
+        let c = lerpColor(c1, c2, inter)
+        stroke(c)
+        line(i - w, y, i - w, y + h)
+      }
+    } else {
+      for (let i = x; i <= x + w; i++) {
+        let inter = map(i, x, x + w, 0, 1)
+        let c = lerpColor(c1, c2, inter)
+        stroke(c)
+        line(i + w, y, i + w, y + h)
+      }
+    }
   }
 }
