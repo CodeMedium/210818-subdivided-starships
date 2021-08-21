@@ -10,6 +10,7 @@
 let spaceships = []
 let asteroids = []
 let ringworlds = []
+let cityPlanets = []
 
 /**
  * Sketch entry point
@@ -19,8 +20,9 @@ function setup () {
   maxShips = random(20, 50)
   maxAsteroids = random(30, 70)
   maxRingworlds = random(5, 20)
+  maxCityPlanets = random(7, 10)
   bgColor = [0, 25, 60]
-  shipColors = ['#fff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
+  colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
   
   createCanvas(windowWidth, windowHeight)
   createScene()
@@ -30,31 +32,34 @@ function setup () {
  * Recreates the scene
  */
 function createScene () {
-  // Ships
   spaceships = []
   background(bgColor)
   for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
 
-  // Asteroids
   asteroids = []
   for (let i = 0; i < maxAsteroids; i++) {
     asteroids.push(new Asteroid())
   }
 
-  // Ringworlds
   ringworlds = []
   for (let i = 0; i < maxRingworlds; i++) {
     ringworlds.push(new Ringworld())
   }
+
+  cityPlanets = []
+  for (let i = 0; i < maxCityPlanets; i++) {
+    cityPlanets.push(new CityPlanet())
+  }
 }
 
 /**
- * Returns a color in shipColors
+ * Returns a color in colors
  */
-function getColor () {
-  return shipColors[Math.floor(random(shipColors.length))]
+function getColor (transparent = '') {
+  if (transparent) transparent = '66'
+  return colors[Math.floor(random(colors.length))] + transparent
 }
 
 /**
@@ -65,6 +70,7 @@ function draw () {
 
   asteroids.forEach(asteroid => {asteroid.update()})
   ringworlds.forEach(ringworld => {ringworld.update()})
+  cityPlanets.forEach(cityPlanet => {cityPlanet.update()})
   spaceships.forEach(spaceship => {spaceship.update()})
 
   /**
@@ -274,7 +280,7 @@ class Asteroid {
 
 
 /**
- * Represents an asteroid (litle donuts)
+ * Represents a ringworld
  */
 class Ringworld {
   constructor () {
@@ -307,9 +313,40 @@ class Ringworld {
     circle(this.x, this.y, this.size)
 
     // Ring
-    strokeWeight(2)
+    strokeWeight(1)
     stroke(this.ring.color)
     noFill()
+    circle(this.x, this.y, this.ring.size)
+  }
+}
+
+/**
+ * Represents a planet with towers
+ */
+class CityPlanet {
+  constructor () {
+    this.x = random(0, windowWidth)
+    this.y = random(0, windowWidth)
+    this.size = random(10, 50)
+    this.thickness = random(this.size - 10, this.size)
+    this.color = getColor(true)
+    this.ring = {
+      size: random(this.size + 20, this.size + 80),
+      color: getColor(true)
+    }
+  }
+
+  update () {
+    // Center
+    noFill()
+    rotate(0)
+    strokeWeight(this.thickness)
+    stroke(this.color)
+    circle(this.x, this.y, this.size)
+
+    // Ring
+    strokeWeight(this.ring.size - this.size - this.thickness)
+    stroke(this.ring.color)
     circle(this.x, this.y, this.ring.size)
   }
 }
