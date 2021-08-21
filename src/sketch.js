@@ -9,6 +9,7 @@
 // Variables
 let spaceships = []
 let asteroids = []
+let ringworlds = []
 
 /**
  * Sketch entry point
@@ -16,7 +17,8 @@ let asteroids = []
 function setup () {
   // Settings
   maxShips = random(20, 50)
-  maxAsteroids = random(50, 100)
+  maxAsteroids = random(30, 70)
+  maxRingworlds = random(5, 20)
   bgColor = [0, 25, 60]
   shipColors = ['#fff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
   
@@ -38,7 +40,13 @@ function createScene () {
   // Asteroids
   asteroids = []
   for (let i = 0; i < maxAsteroids; i++) {
-    asteroids.push(new Asteroids())
+    asteroids.push(new Asteroid())
+  }
+
+  // Ringworlds
+  ringworlds = []
+  for (let i = 0; i < maxRingworlds; i++) {
+    ringworlds.push(new Ringworld())
   }
 }
 
@@ -56,6 +64,7 @@ function draw () {
   background(bgColor)
 
   asteroids.forEach(asteroid => {asteroid.update()})
+  ringworlds.forEach(ringworld => {ringworld.update()})
   spaceships.forEach(spaceship => {spaceship.update()})
 
   /**
@@ -237,7 +246,7 @@ class Spaceship {
 /**
  * Represents an asteroid (litle donuts)
  */
-class Asteroids {
+class Asteroid {
   constructor () {
     this.x = random(0, windowWidth)
     this.y = random(0, windowWidth)
@@ -260,6 +269,48 @@ class Asteroids {
     strokeWeight(this.thickness)
     stroke(this.color)
     circle(this.x, this.y, this.size)
+  }
+}
+
+
+/**
+ * Represents an asteroid (litle donuts)
+ */
+class Ringworld {
+  constructor () {
+    this.x = random(0, windowWidth)
+    this.y = random(0, windowWidth)
+    this.size = random(3, 10)
+    this.thickness = random(1, this.size)
+    this.color = getColor()
+    this.ring = {
+      size: random(this.size + 20, this.size + 80),
+      color: getColor()
+    }
+    this.center = {
+      hasCenter: random() > .5,
+      color: getColor()
+    }
+  }
+
+  update () {
+    if (this.center.hasCenter) {
+      fill(this.center.color)
+    } else {
+      noFill()
+    }
+
+    // Center
+    rotate(0)
+    strokeWeight(this.thickness)
+    stroke(this.color)
+    circle(this.x, this.y, this.size)
+
+    // Ring
+    strokeWeight(2)
+    stroke(this.ring.color)
+    noFill()
+    circle(this.x, this.y, this.ring.size)
   }
 }
 
