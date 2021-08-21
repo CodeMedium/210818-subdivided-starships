@@ -354,7 +354,7 @@ class CityPlanet {
         rotate: random(PI * 2),
         direction: random() > .5 ? 1 : -1,
         thickness: random(2, 8),
-        color: getColor()
+        color: getColor('aa')
       }
       city.height = random(1, city.maxHeight - 1)
       
