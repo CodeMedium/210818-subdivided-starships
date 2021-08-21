@@ -67,7 +67,6 @@ function createCityPlanets () {
  * Returns a color in colors
  */
 function getColor (transparent = '') {
-  if (transparent) transparent = '66'
   return colors[Math.floor(random(colors.length))] + transparent
 }
 
@@ -169,6 +168,7 @@ class Spaceship {
    */
   update () {
     // Setup
+    translate(0, 0)
     rotate(this.rotation)
     strokeWeight(1)
     
@@ -338,14 +338,33 @@ class CityPlanet {
     this.y = random(0, windowWidth)
     this.size = random(10, 50)
     this.thickness = random(this.size - 10, this.size)
-    this.color = getColor(true)
+    this.color = getColor('aa')
     this.ring = {
       size: random(this.size + 20, this.size + 80),
-      color: getColor(true)
+      color: getColor('aa')
+    }
+    this.extraRotation = 0
+    this.extraRotationDir = random() > .5 ? 1 : -1
+
+    // Create cities
+    this.cities = []
+    for (let i = 0; i < random(30, 60); i++) {
+      const city = {
+        maxHeight: random(10, 60),
+        rotate: random(PI * 2),
+        direction: random() > .5 ? 1 : -1,
+        thickness: random(2, 8),
+        color: getColor()
+      }
+      city.height = random(1, city.maxHeight - 1)
+      
+      this.cities.push(city)
     }
   }
 
   update () {
+    this.extraRotation += 0.0025
+    
     // Center
     noFill()
     rotate(0)
@@ -359,6 +378,21 @@ class CityPlanet {
     circle(this.x, this.y, this.ring.size)
 
     // City
+    strokeWeight(0)
+    fill(this.ring.color)
+    this.cities.forEach(city => {
+      city.height += .5 * city.direction
+      if (city.height < 1) city.direction = 1
+      if (city.height > city.maxHeight) city.direction = -1
+      
+      push()
+      fill(city.color)
+      translate(this.x, this.y)
+      rotate(city.rotate + this.extraRotation * this.extraRotationDir)
+      translate(0, this.ring.size - this.thickness - (this.size - this.thickness) / 2)
+      rect(-city.thickness / 2, 0, city.thickness / 2, city.height)
+      pop()
+    })
   }
 }
 
