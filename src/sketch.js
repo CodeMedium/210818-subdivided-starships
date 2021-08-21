@@ -6,29 +6,47 @@
  * This is the 2nd in a series to reproduce the art on the cover of "Code as Creative Medium" by Golan Levin and Tega Brain
  */
 
-/**
- * Variables
- */
+// Variables
 let spaceships = []
-let maxShips
-let shipColors = ['#fff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
-const bgColor = [0, 25, 60]
+let asteroids = []
 
 /**
  * Sketch entry point
  */
 function setup () {
+  // Settings
   maxShips = random(20, 50)
+  maxAsteroids = random(50, 100)
+  bgColor = [0, 25, 60]
+  shipColors = ['#fff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
+  
   createCanvas(windowWidth, windowHeight)
-  createShips()
+  createScene()
 }
 
-function createShips () {
+/**
+ * Recreates the scene
+ */
+function createScene () {
+  // Ships
   spaceships = []
   background(bgColor)
   for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
+
+  // Asteroids
+  asteroids = []
+  for (let i = 0; i < maxAsteroids; i++) {
+    asteroids.push(new Asteroids())
+  }
+}
+
+/**
+ * Returns a color in shipColors
+ */
+function getColor () {
+  return shipColors[Math.floor(random(shipColors.length))]
 }
 
 /**
@@ -37,9 +55,8 @@ function createShips () {
 function draw () {
   background(bgColor)
 
-  spaceships.forEach(ship => {
-    ship.update()
-  })
+  asteroids.forEach(asteroid => {asteroid.update()})
+  spaceships.forEach(spaceship => {spaceship.update()})
 
   /**
    * Recording. This will only work locally and not on OpenProcessing
@@ -71,16 +88,9 @@ class Spaceship {
     this.speed = this.width / 120
     
     this.dome = {
-      color: this.getColor(),
+      color: getColor(),
       flip: random() > .5
     }
-  }
-  
-  /**
-   * Returns a color in shipColors
-   */
-  getColor () {
-    return shipColors[Math.floor(random(shipColors.length))]
   }
   
   /**
@@ -101,7 +111,7 @@ class Spaceship {
     // Setup properties and maybe create children
     divisions.forEach((division, i) => {
       divisions[i].isDivided = random() > (.5 + depth / 10)
-      divisions[i].fill = this.getColor()
+      divisions[i].fill = getColor()
       divisions[i].width = parent.width / 2
       divisions[i].height = parent.height / 2
     })
@@ -131,7 +141,7 @@ class Spaceship {
   }
   
   /**
-   * Update the 
+   * Update the ships posiiton
    */
   update () {
     // Setup
@@ -225,6 +235,51 @@ class Spaceship {
 }
 
 /**
+ * Represents an asteroid (litle donuts)
+ */
+class Asteroids {
+  constructor () {
+    this.x = random(0, windowWidth)
+    this.y = random(0, windowWidth)
+    this.size = random(3, 10)
+    this.thickness = random(1, this.size)
+    this.color = getColor()
+    this.center = {
+      hasCenter: random() > .5,
+      color: getColor()
+    }
+  }
+
+  update () {
+    if (this.center.hasCenter) {
+      fill(this.center.color)
+    } else {
+      noFill()
+    }
+    rotate(0)
+    strokeWeight(this.thickness)
+    stroke(this.color)
+    circle(this.x, this.y, this.size)
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
  * Split keypressed into multiple functions
  * - On my localhost I have another file to record the canvas into a video,
  *   but on OpenProcessing.org this file is not. Locally, the other file
@@ -234,6 +289,6 @@ class Spaceship {
  */
  const keypressFn = [function () {
   if (keyCode !== 32) {
-    createShips()
+    createScene()
   }
 }]
