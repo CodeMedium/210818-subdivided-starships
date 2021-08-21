@@ -6,6 +6,9 @@
  * This is the 2nd in a series to reproduce the art on the cover of "Code as Creative Medium" by Golan Levin and Tega Brain
  */
 
+/**
+ * Variables
+ */
 let spaceships = []
 let maxShips
 let shipColors = ['#fff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
@@ -37,16 +40,21 @@ function draw () {
   spaceships.forEach(ship => {
     ship.update()
   })
+
+  /**
+   * Recording. This will only work locally and not on OpenProcessing
+   * @see https://github.com/CodeMedium/subdivided-starships
+   */
+  if (typeof capturer !== 'undefined') {
+    capturer.capture(canvas)
+  }
 }
 
 /**
  * Recreate scene on mouseclick
  */
 function keyPressed () {
-  createShips()
-}
-function mouseClicked () {
-  createShips()
+  keypressFn.forEach(fn => fn())
 }
 
 /**
@@ -215,3 +223,17 @@ class Spaceship {
     }
   }
 }
+
+/**
+ * Split keypressed into multiple functions
+ * - On my localhost I have another file to record the canvas into a video,
+ *   but on OpenProcessing.org this file is not. Locally, the other file
+ *   adds another function that starts recording if space is pressed
+ * 
+ * @see https://github.com/CodeMedium/subdivided-starships
+ */
+ const keypressFn = [function () {
+  if (keyCode !== 32) {
+    createShips()
+  }
+}]
