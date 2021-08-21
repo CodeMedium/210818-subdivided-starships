@@ -11,7 +11,12 @@
 - Version 2 - Moving ships - https://openprocessing.org/sketch/1246321
 
 ## Controls
-- Click - Regenerates the sketch
+- 1 - Refresh everything
+- 2 - Refresh ships
+- 3 - Refresh asteroids
+- 4 - Refresh ringworlds
+- 5 - Refresh city planets
+- SPACE - Record (only works locally) 
 
 ---
 

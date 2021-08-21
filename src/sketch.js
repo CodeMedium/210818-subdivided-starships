@@ -32,22 +32,31 @@ function setup () {
  * Recreates the scene
  */
 function createScene () {
+  createShips()
+  createAsteroids()
+  createRingworlds()
+  createCityPlanets()
+}
+function createShips () {
   spaceships = []
   background(bgColor)
   for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
-
+}
+function createAsteroids () {
   asteroids = []
   for (let i = 0; i < maxAsteroids; i++) {
     asteroids.push(new Asteroid())
   }
-
+}
+function createRingworlds () {
   ringworlds = []
   for (let i = 0; i < maxRingworlds; i++) {
     ringworlds.push(new Ringworld())
   }
-
+}
+function createCityPlanets () {
   cityPlanets = []
   for (let i = 0; i < maxCityPlanets; i++) {
     cityPlanets.push(new CityPlanet())
@@ -348,6 +357,8 @@ class CityPlanet {
     strokeWeight(this.ring.size - this.size - this.thickness)
     stroke(this.ring.color)
     circle(this.x, this.y, this.ring.size)
+
+    // City
   }
 }
 
@@ -376,7 +387,23 @@ class CityPlanet {
  * @see https://github.com/CodeMedium/subdivided-starships
  */
  const keypressFn = [function () {
-  if (keyCode !== 32) {
-    createScene()
+  switch (keyCode) {
+    case 32:
+      break
+    case 49:
+      createScene()
+      break
+    case 50:
+      createShips()
+      break
+    case 51:
+      createAsteroids()
+      break
+    case 52:
+      createRingworlds()
+      break
+    case 53:
+      createCityPlanets()
+      break
   }
 }]
