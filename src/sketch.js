@@ -20,7 +20,7 @@ let bg
  */
 function setup () {
   // Settings
-  maxShips = 50//random(20, 50)
+  maxShips = 100//random(20, 50)
   maxAsteroids = 70//random(30, 70)
   maxRingworlds = 20//random(5, 20)
   maxCityPlanets = 10//random(7, 10)
@@ -119,12 +119,9 @@ class Spaceship {
     this.y = random(0, windowHeight)
     this.rotation = random(0, 359)
     this.speed = this.width / 120
-    this.bg = createGraphics(this.width, this.height)
+    this.bg = createGraphics(this.width * 2, this.height)
     
-    this.dome = {
-      color: getColor(),
-      flip: random() > .5
-    }
+    this.domeColor =  getColor()
     this.children = this.subdivide()
 
     this.draw()
@@ -135,7 +132,6 @@ class Spaceship {
    */
   draw () {
     // Setup
-    // this.bg.rotate(this.rotation)
     this.bg.strokeWeight(spaceshipStroke)
     
     // Draw the exhaust
@@ -143,12 +139,8 @@ class Spaceship {
     
     // Draw the dome
     this.bg.stroke(0)
-    this.bg.fill(this.dome.color)
-    if (this.dome.flip) {
-      this.bg.circle(this.width - this.height / 2 - spaceshipStroke * 2, this.height / 2, this.height - spaceshipStroke)
-    } else {
-      this.bg.circle(this.height / 2 + spaceshipStroke * 2, this.height / 2, this.height - spaceshipStroke)
-    }
+    this.bg.fill(this.domeColor)
+    this.bg.circle(this.height / 2 + spaceshipStroke * 2, this.height / 2, this.height - spaceshipStroke)
 
     // Draw subdivisions
     this.updateChildren(this.children)
@@ -158,11 +150,7 @@ class Spaceship {
    * Draw it on the canvas
    */
    update () {
-    if (this.dome.flip) {
-      this.x += this.speed
-    } else {
-      this.x -= this.speed
-    }
+    this.x -= this.speed
 
     // Wrap elements around
     this.wrap(this)
@@ -180,11 +168,7 @@ class Spaceship {
     if (!parent) {
       let x
 
-      if (this.dome.flip) {
-        x = 0
-      } else {
-        x = this.height / 2
-      }
+      x = this.height / 2
 
       parent = {
         x,
@@ -246,10 +230,10 @@ class Spaceship {
    * @fixme Because we use rotation, the x/y isn't relative to the viewport. I have no idea how to fix this 😅
    */
   wrap (target) {
-    if (target.x < -windowWidth * 2) target.x = windowWidth * 2
-    if (target.x > windowWidth * 2) target.x = -windowWidth * 2
-    if (target.y < -windowHeight * 2) target.y = windowHeight * 2
-    if (target.y > windowHeight * 2) target.y = -windowHeight * 2
+    if (target.x < -windowWidth * 1.5) target.x = windowWidth * 1.5
+    if (target.x > windowWidth * 1.5) target.x = -windowWidth * 1.5
+    if (target.y < -windowHeight * 1.5) target.y = windowHeight * 1.5
+    if (target.y > windowHeight * 1.5) target.y = -windowHeight * 1.5
   }
 
   /**
@@ -257,10 +241,6 @@ class Spaceship {
    * @see https://p5js.org/examples/color-linear-gradient.html
    */
   drawExhaust () {
-    let x = this.x
-    let y = this.y
-    let w = this.width
-    let h = this.height
     let c1 = color([44, 122, 232, 90])
     let c2 = color([0, 25, 60, 0])
     
@@ -268,24 +248,13 @@ class Spaceship {
 
     // Top to bottom gradient
     let widthMod = 0
-    if (this.dome.flip) {
-      for (let i = x + w * 2; i > x; i--) {
-        let inter = map(i, x + w, x, 0, 1)
-        let c = lerpColor(c1, c2, inter)
-        this.bg.stroke(c)
+    for (let i = 0; i <= this.width; i++) {
+      let inter = map(i, 0, this.width, 0, 1)
+      let c = lerpColor(c1, c2, inter)
+      this.bg.stroke(c)
 
-        widthMod += .1
-        this.bg.line(i - w, y - widthMod, i - w, y + h + widthMod)
-      }
-    } else {
-      for (let i = x - w; i <= x + w * 2; i++) {
-        let inter = map(i, x, x + w, 0, 1)
-        let c = lerpColor(c1, c2, inter)
-        this.bg.stroke(c)
-
-        widthMod += .1
-        this.bg.line(i + w, y - widthMod, i + w, y + h + widthMod)
-      }
+      widthMod += .1
+      this.bg.line(this.width + i, 0, this.width + i, this.height)
     }
   }
 }
