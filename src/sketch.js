@@ -119,7 +119,7 @@ class Spaceship {
     this.y = random(0, windowHeight)
     this.rotation = random(0, 359)
     this.speed = this.width / 120
-    this.bg = createGraphics(this.width * 2, this.height)
+    this.bg = createGraphics(this.width * 2, this.height * 2)
     
     this.domeColor =  getColor()
     this.children = this.subdivide()
@@ -140,7 +140,7 @@ class Spaceship {
     // Draw the dome
     this.bg.stroke(0)
     this.bg.fill(this.domeColor)
-    this.bg.circle(this.height / 2 + spaceshipStroke * 2, this.height / 2, this.height - spaceshipStroke)
+    this.bg.circle(this.height / 2 + spaceshipStroke * 2, this.height, this.height - spaceshipStroke)
 
     // Draw subdivisions
     this.updateChildren(this.children)
@@ -172,7 +172,7 @@ class Spaceship {
 
       parent = {
         x,
-        y: 0,
+        y: this.height / 2,
         width: this.width - this.height / 2 - spaceshipStroke,
         height: this.height - spaceshipStroke
       }
@@ -248,13 +248,13 @@ class Spaceship {
 
     // Top to bottom gradient
     let widthMod = 0
-    for (let i = 0; i <= this.width; i++) {
-      let inter = map(i, 0, this.width, 0, 1)
+    for (let i = 0; i <= this.width * 2; i++) {
+      let inter = map(i, 0, this.width * 2, 0, 1)
       let c = lerpColor(c1, c2, inter)
       this.bg.stroke(c)
 
       widthMod += .1
-      this.bg.line(this.width + i, 0, this.width + i, this.height)
+      this.bg.line(this.height / 2 + i, this.height / 2 - widthMod, this.height / 2 + i, this.height * 1.5 + widthMod)
     }
   }
 }
