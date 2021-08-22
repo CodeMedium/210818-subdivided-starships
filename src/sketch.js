@@ -8,23 +8,27 @@
 
 // Variables
 let spaceships = []
+const spaceshipStroke = 1
+
 let asteroids = []
 let ringworlds = []
 let cityPlanets = []
+let bg
 
 /**
  * Sketch entry point
  */
 function setup () {
   // Settings
-  maxShips = random(20, 50)
-  maxAsteroids = random(30, 70)
-  maxRingworlds = random(5, 20)
-  maxCityPlanets = random(7, 10)
+  maxShips = 50//random(20, 50)
+  maxAsteroids = 70//random(30, 70)
+  maxRingworlds = 20//random(5, 20)
+  maxCityPlanets = 10//random(7, 10)
   bgColor = [0, 25, 60]
   colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
-  
+    
   createCanvas(windowWidth, windowHeight)
+  bg = createGraphics(windowWidth, windowHeight)
   createScene()
 }
 
@@ -32,14 +36,14 @@ function setup () {
  * Recreates the scene
  */
 function createScene () {
-  createShips()
   createAsteroids()
   createRingworlds()
+  redrawBg()
+  createShips()
   createCityPlanets()
 }
 function createShips () {
   spaceships = []
-  background(bgColor)
   for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
@@ -64,6 +68,15 @@ function createCityPlanets () {
 }
 
 /**
+ * Repaints the background with asteroids and planets
+ */
+function redrawBg () {
+  bg.background(bgColor)
+  asteroids.forEach(asteroid => {asteroid.update()})
+  ringworlds.forEach(ringworld => {ringworld.update()})
+}
+
+/**
  * Returns a color in colors
  */
 function getColor (transparent = '') {
@@ -74,10 +87,8 @@ function getColor (transparent = '') {
  * "Game loop"
  */
 function draw () {
-  background(bgColor)
+  image(bg, 0, 0)
 
-  asteroids.forEach(asteroid => {asteroid.update()})
-  ringworlds.forEach(ringworld => {ringworld.update()})
   cityPlanets.forEach(cityPlanet => {cityPlanet.update()})
   spaceships.forEach(spaceship => {spaceship.update()})
 
@@ -107,13 +118,57 @@ class Spaceship {
     this.x = random(0, windowWidth)
     this.y = random(0, windowHeight)
     this.rotation = random(0, 359)
-    this.children = this.subdivide()
     this.speed = this.width / 120
+    this.bg = createGraphics(this.width, this.height)
     
     this.dome = {
       color: getColor(),
       flip: random() > .5
     }
+    this.children = this.subdivide()
+
+    this.draw()
+  }
+
+  /**
+   * Draw once
+   */
+  draw () {
+    // Setup
+    // this.bg.rotate(this.rotation)
+    this.bg.strokeWeight(spaceshipStroke)
+    
+    // Draw the exhaust
+    this.drawExhaust()
+    
+    // Draw the dome
+    this.bg.stroke(0)
+    this.bg.fill(this.dome.color)
+    if (this.dome.flip) {
+      this.bg.circle(this.width - this.height / 2 - spaceshipStroke * 2, this.height / 2, this.height - spaceshipStroke)
+    } else {
+      this.bg.circle(this.height / 2 + spaceshipStroke * 2, this.height / 2, this.height - spaceshipStroke)
+    }
+
+    // Draw subdivisions
+    this.updateChildren(this.children)
+  }
+  
+  /**
+   * Draw it on the canvas
+   */
+   update () {
+    if (this.dome.flip) {
+      this.x += this.speed
+    } else {
+      this.x -= this.speed
+    }
+
+    // Wrap elements around
+    this.wrap(this)
+    
+    rotate(this.rotation)
+    image(this.bg, this.x, this.y)
   }
   
   /**
@@ -123,11 +178,19 @@ class Spaceship {
     const divisions = [{}, {}, {}, {}]
     
     if (!parent) {
+      let x
+
+      if (this.dome.flip) {
+        x = 0
+      } else {
+        x = this.height / 2
+      }
+
       parent = {
-        x: this.x,
-        y: this.y,
-        width: this.width,
-        height: this.height
+        x,
+        y: 0,
+        width: this.width - this.height / 2 - spaceshipStroke,
+        height: this.height - spaceshipStroke
       }
     }
     
@@ -162,46 +225,15 @@ class Spaceship {
     
     return divisions
   }
-  
-  /**
-   * Update the ships posiiton
-   */
-  update () {
-    // Setup
-    translate(0, 0)
-    rotate(this.rotation)
-    strokeWeight(1)
     
-    // Draw the exhaust
-    this.drawExhaust()
-    
-    // Draw the dome
-    stroke(0)
-    fill(this.dome.color)
-    if (this.dome.flip) {
-      this.x += this.speed
-      circle(this.x + this.width, this.y + this.height / 2, this.height)
-    } else {
-      this.x -= this.speed
-      circle(this.x, this.y + this.height / 2, this.height)
-    }
-
-    // Wrap elements around
-    this.wrap(this)
-
-    // Draw subdivisions
-    this.updateChildren(this.children)
-  }
-  
   /**
    * Recursively update children
    */
   updateChildren (children) {
     children.forEach(child => {
-      child.x += this.dome.flip ? this.speed : -this.speed
       this.wrap(child)
-      fill(child.fill)
-      rect(child.x, child.y, child.width, child.height)
+      this.bg.fill(child.fill)
+      this.bg.rect(child.x, child.y, child.width, child.height)
       
       if (child.children) {
         this.updateChildren(child.children)
@@ -232,7 +264,7 @@ class Spaceship {
     let c1 = color([44, 122, 232, 90])
     let c2 = color([0, 25, 60, 0])
     
-    noFill()
+    this.bg.noFill()
 
     // Top to bottom gradient
     let widthMod = 0
@@ -240,19 +272,19 @@ class Spaceship {
       for (let i = x + w * 2; i > x; i--) {
         let inter = map(i, x + w, x, 0, 1)
         let c = lerpColor(c1, c2, inter)
-        stroke(c)
+        this.bg.stroke(c)
 
         widthMod += .1
-        line(i - w, y - widthMod, i - w, y + h + widthMod)
+        this.bg.line(i - w, y - widthMod, i - w, y + h + widthMod)
       }
     } else {
       for (let i = x - w; i <= x + w * 2; i++) {
         let inter = map(i, x, x + w, 0, 1)
         let c = lerpColor(c1, c2, inter)
-        stroke(c)
+        this.bg.stroke(c)
 
         widthMod += .1
-        line(i + w, y - widthMod, i + w, y + h + widthMod)
+        this.bg.line(i + w, y - widthMod, i + w, y + h + widthMod)
       }
     }
   }
@@ -276,14 +308,14 @@ class Asteroid {
 
   update () {
     if (this.center.hasCenter) {
-      fill(this.center.color)
+      bg.fill(this.center.color)
     } else {
-      noFill()
+      bg.noFill()
     }
-    rotate(0)
-    strokeWeight(this.thickness)
-    stroke(this.color)
-    circle(this.x, this.y, this.size)
+    bg.rotate(0)
+    bg.strokeWeight(this.thickness)
+    bg.stroke(this.color)
+    bg.circle(this.x, this.y, this.size)
   }
 }
 
@@ -310,22 +342,22 @@ class Ringworld {
 
   update () {
     if (this.center.hasCenter) {
-      fill(this.center.color)
+      bg.fill(this.center.color)
     } else {
-      noFill()
+      bg.noFill()
     }
 
     // Center
-    rotate(0)
-    strokeWeight(this.thickness)
-    stroke(this.color)
-    circle(this.x, this.y, this.size)
+    bg.rotate(0)
+    bg.strokeWeight(this.thickness)
+    bg.stroke(this.color)
+    bg.circle(this.x, this.y, this.size)
 
     // Ring
-    strokeWeight(1)
-    stroke(this.ring.color)
-    noFill()
-    circle(this.x, this.y, this.ring.size)
+    bg.strokeWeight(1)
+    bg.stroke(this.ring.color)
+    bg.noFill()
+    bg.circle(this.x, this.y, this.ring.size)
   }
 }
 
@@ -429,15 +461,19 @@ class CityPlanet {
       break
     case 50:
       createShips()
+      redrawBg()
       break
     case 51:
       createAsteroids()
+      redrawBg()
       break
     case 52:
       createRingworlds()
+      redrawBg()
       break
     case 53:
       createCityPlanets()
+      redrawBg()
       break
   }
 }]
