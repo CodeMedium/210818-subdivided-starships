@@ -10,19 +10,19 @@
 let spaceships = []
 const spaceshipStroke = 1
 
-let asteroids = []
 let ringworlds = []
 let cityPlanets = []
+let cityConnections = {}
+let cityCurId = 0
 let bg
+
+bgColor = [0, 25, 60]
+colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
 
 /**
  * Sketch entry point
  */
 function setup () {
-  // Settings
-  bgColor = [0, 25, 60]
-  colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
-    
   createCanvas(windowWidth, windowHeight)
   bg = createGraphics(windowWidth, windowHeight)
   createScene()
@@ -60,8 +60,9 @@ function createRingworlds () {
   }
 }
 function createCityPlanets () {
-  maxCityPlanets = random(2, 5)
+  maxCityPlanets = random(3, 8)
   cityPlanets = []
+  cityConnections = {}
   for (let i = 0; i < maxCityPlanets; i++) {
     cityPlanets.push(new CityPlanet())
   }
@@ -89,6 +90,7 @@ function getColor (transparent = '') {
 function draw () {
   image(bg, 0, 0)
 
+  connectCities()
   cityPlanets.forEach(cityPlanet => {cityPlanet.update()})
   spaceships.forEach(spaceship => {spaceship.update()})
 
@@ -348,11 +350,15 @@ class Ringworld {
  */
 class CityPlanet {
   constructor () {
-    this.x = random(0, windowWidth)
-    this.y = random(0, windowWidth)
+    this.id = ++cityCurId
+    
+    this.x = random(windowWidth - windowWidth * 1.15, windowWidth * 1.15)
+    this.y = random(windowHeight - windowHeight * 1.15, windowHeight * 1.15)
+
     this.size = random(10, 50)
     this.thickness = random(this.size - 10, this.size)
     this.color = getColor('aa')
+    
     this.ring = {
       size: random(this.size + 20, this.size + 80),
       color: getColor('aa')
@@ -374,6 +380,10 @@ class CityPlanet {
       
       this.cities.push(city)
     }
+
+    setTimeout(() => {
+      this.connectCities()
+    }, 0)
   }
 
   update () {
@@ -408,9 +418,38 @@ class CityPlanet {
       pop()
     })
   }
+
+  /**
+   * Connects the star to all other stars
+   */
+  connectCities () {
+    cityPlanets.forEach(planet => {
+      cityPlanets.forEach(city => {
+        if (random() < .5) {
+          let maxId = max(planet.id, city.id)
+          let minId = max(planet.id, city.id)
+          cityConnections[maxId + '-' + minId] = {
+            from: planet,
+            to: city,
+            color: getColor(hex(random(20), 2))
+          }
+        }
+      })
+    })
+  }
 }
 
-
+/**
+ * Connect all cities
+ */
+function connectCities () {
+  Object.keys(cityConnections).forEach(key => {
+    const road = cityConnections[key]
+    stroke(road.color)
+    strokeWeight(1)
+    line(road.from.x, road.from.y, road.to.x, road.to.y)
+  })
+}
 
 
 
