@@ -236,19 +236,30 @@ class Spaceship {
     if (target.x < -windowWidth * 1.5) {
       target.x = windowWidth * 1.5 
       target.rotation = random(PI * 2)
+      this.newColor(target)
     }
     if (target.x > windowWidth * 1.5) {
       target.x = -windowWidth * 1.5
       target.rotation = random(PI * 2)
+      this.newColor(target)
     }
     if (target.y < -windowHeight * 1.5) {
       target.y = windowHeight * 1.5
       target.rotation = random(PI * 2)
+      this.newColor(target)
     }
     if (target.y > windowHeight * 1.5) {
       target.y = -windowHeight * 1.5
       target.rotation = random(PI * 2)
+      this.newColor(target)
     }
+  }
+
+  newColor (target) {
+    target.color = getColor()
+    target.children && target.children.forEach(child => {
+      this.newColor(child)
+    })
   }
 
   /**
