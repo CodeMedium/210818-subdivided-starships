@@ -20,10 +20,6 @@ let bg
  */
 function setup () {
   // Settings
-  maxShips = 100//random(20, 50)
-  maxAsteroids = 70//random(30, 70)
-  maxRingworlds = 20//random(5, 20)
-  maxCityPlanets = 10//random(7, 10)
   bgColor = [0, 25, 60]
   colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
     
@@ -43,24 +39,28 @@ function createScene () {
   createCityPlanets()
 }
 function createShips () {
+  maxShips = random(50, 100)
   spaceships = []
   for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
 }
 function createAsteroids () {
+  maxAsteroids = random(30, 70)
   asteroids = []
   for (let i = 0; i < maxAsteroids; i++) {
     asteroids.push(new Asteroid())
   }
 }
 function createRingworlds () {
+  maxRingworlds = random(5, 20)
   ringworlds = []
   for (let i = 0; i < maxRingworlds; i++) {
     ringworlds.push(new Ringworld())
   }
 }
 function createCityPlanets () {
+  maxCityPlanets = random(2, 5)
   cityPlanets = []
   for (let i = 0; i < maxCityPlanets; i++) {
     cityPlanets.push(new CityPlanet())
@@ -115,9 +115,9 @@ class Spaceship {
   constructor () {
     this.width = random(30, 200)
     this.height = this.width / 3
-    this.x = random(0, windowWidth)
-    this.y = random(0, windowHeight)
-    this.rotation = random(0, 359)
+    this.x = random(windowWidth * -1.5, windowWidth * 1.5)
+    this.y = random(windowWidth * -1.5, windowHeight * 1.5)
+    this.rotation = random(-PI)
     this.speed = this.width / 120
     this.bg = createGraphics(this.width * 2, this.height * 2)
     
@@ -155,8 +155,10 @@ class Spaceship {
     // Wrap elements around
     this.wrap(this)
     
+    push()
     rotate(this.rotation)
     image(this.bg, this.x, this.y)
+    pop()
   }
   
   /**
@@ -215,7 +217,6 @@ class Spaceship {
    */
   updateChildren (children) {
     children.forEach(child => {
-      this.wrap(child)
       this.bg.fill(child.fill)
       this.bg.rect(child.x, child.y, child.width, child.height)
       
@@ -230,10 +231,22 @@ class Spaceship {
    * @fixme Because we use rotation, the x/y isn't relative to the viewport. I have no idea how to fix this 😅
    */
   wrap (target) {
-    if (target.x < -windowWidth * 1.5) target.x = windowWidth * 1.5
-    if (target.x > windowWidth * 1.5) target.x = -windowWidth * 1.5
-    if (target.y < -windowHeight * 1.5) target.y = windowHeight * 1.5
-    if (target.y > windowHeight * 1.5) target.y = -windowHeight * 1.5
+    if (target.x < -windowWidth * 1.5) {
+      target.x = windowWidth * 1.5 
+      target.rotation = random(PI * 2)
+    }
+    if (target.x > windowWidth * 1.5) {
+      target.x = -windowWidth * 1.5
+      target.rotation = random(PI * 2)
+    }
+    if (target.y < -windowHeight * 1.5) {
+      target.y = windowHeight * 1.5
+      target.rotation = random(PI * 2)
+    }
+    if (target.y > windowHeight * 1.5) {
+      target.y = -windowHeight * 1.5
+      target.rotation = random(PI * 2)
+    }
   }
 
   /**
