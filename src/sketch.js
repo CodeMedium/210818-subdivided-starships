@@ -235,31 +235,37 @@ class Spaceship {
   wrap (target) {
     if (target.x < -windowWidth * 1.5) {
       target.x = windowWidth * 1.5 
-      target.rotation = random(PI * 2)
-      this.newColor(target)
+      target.newShip(target)
     }
     if (target.x > windowWidth * 1.5) {
       target.x = -windowWidth * 1.5
-      target.rotation = random(PI * 2)
-      this.newColor(target)
+      target.newShip(target)
     }
     if (target.y < -windowHeight * 1.5) {
       target.y = windowHeight * 1.5
-      target.rotation = random(PI * 2)
-      this.newColor(target)
+      target.newShip(target)
     }
     if (target.y > windowHeight * 1.5) {
       target.y = -windowHeight * 1.5
-      target.rotation = random(PI * 2)
-      this.newColor(target)
+      target.newShip(target)
     }
   }
 
-  newColor (target) {
-    target.color = getColor()
-    target.children && target.children.forEach(child => {
-      this.newColor(child)
-    })
+  /**
+   * Regenerates a new ship
+   */
+  newShip (target) {
+    target.width = random(30, 200)
+    target.height = target.width / 3
+    target.rotation = random(PI * 2)
+    target.speed = target.width / 120
+    target.bg.canvas.remove()
+    target.bg = createGraphics(target.width * 2, target.height * 2)
+    
+    target.domeColor =  getColor()
+    target.children = target.subdivide()
+
+    target.draw()
   }
 
   /**
