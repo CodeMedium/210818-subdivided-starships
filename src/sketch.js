@@ -20,12 +20,23 @@ bgColor = [0, 25, 60]
 colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
 
 /**
+ * Use querystrings to set values
+ */
+let query = new URLSearchParams(window.location.search)
+console.log(query)
+
+/**
  * Sketch entry point
  */
 function setup () {
   createCanvas(windowWidth, windowHeight)
   bg = createGraphics(windowWidth, windowHeight)
   createScene()
+}
+function windowResized () {
+  resizeCanvas(windowWidth, windowHeight)
+  bg.resizeCanvas(windowWidth, windowHeight)
+  redrawBg()
 }
 
 /**
@@ -119,7 +130,7 @@ class Spaceship {
     this.height = this.width / 3
     this.x = random(windowWidth * -1.5, windowWidth * 1.5)
     this.y = random(windowWidth * -1.5, windowHeight * 1.5)
-    this.rotation = random(-PI)
+    this.rotation = random(-PI, PI)
     this.speed = this.width / 120
     this.bg = createGraphics(this.width * 2, this.height * 2)
     
@@ -257,7 +268,7 @@ class Spaceship {
   newShip (target) {
     target.width = random(30, 200)
     target.height = target.width / 3
-    target.rotation = random(PI * 2)
+    target.rotation = random(-PI, PI)
     target.speed = target.width / 120
     target.bg.canvas.remove()
     target.bg = createGraphics(target.width * 2, target.height * 2)
@@ -442,10 +453,10 @@ class CityPlanet {
   connectCities () {
     cityPlanets.forEach(planet => {
       cityPlanets.forEach(city => {
-        if (random() < .5) {
-          let maxId = max(planet.id, city.id)
-          let minId = max(planet.id, city.id)
-          cityConnections[maxId + '-' + minId] = {
+        if (random() < .05) {
+          // let maxId = max(planet.id, city.id)
+          // let minId = max(planet.id, city.id)
+          cityConnections[planet.id + '-' + city.id] = {
             from: planet,
             to: city,
             color: getColor(hex(random(20), 2))
