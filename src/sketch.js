@@ -1,9 +1,15 @@
 /**
- * Subdivided Starships v2
- * Started: 8/18/21
- * By: The Code Medium @thecodemedium
+ * Subdivided Starships v3
+ * Started: 8/22/21
+ * By: Art See Clarke
+ * Twitter: https://twitter.com/thecodemedium
+ * GitHub: https://github.com/codemedium
+ * Personal website: https://codemedium.com
  *
- * This is the 2nd in a series to reproduce the art on the cover of "Code as Creative Medium" by Golan Levin and Tega Brain
+ * 		 "Any sufficiently advanced technology is indistinguishable from magic"
+ * 		 - Arthur C. Clarke
+ *
+ * This is the 3rd in a series to reproduce the art on the cover of "Code as Creative Medium" by Golan Levin and Tega Brain
  */
 
 // Variables
