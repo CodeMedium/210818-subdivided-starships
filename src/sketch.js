@@ -20,15 +20,20 @@ bgColor = [0, 25, 60]
 colors = ['#ffffff', '#ff628c', '#FF9D00', '#fad000', '#2ca300', '#2EC4B6', '#5D37F0']
 
 /**
- * Use querystrings to set values
- */
-let query = new URLSearchParams(window.location.search)
-console.log(query)
-
-/**
  * Sketch entry point
  */
 function setup () {
+  params = Object.assign({
+    minShips: 50,
+    maxShips: 100,
+    minAsteroids: 30,
+    maxAsteroids: 70,
+    minRings: 5,
+    maxRings: 20,
+    minCities: 3,
+    maxCities: 8
+  }, getURLParams())
+  
   createCanvas(windowWidth, windowHeight)
   bg = createGraphics(windowWidth, windowHeight)
   createScene()
@@ -50,28 +55,28 @@ function createScene () {
   createCityPlanets()
 }
 function createShips () {
-  maxShips = random(50, 100)
+  maxShips = random(+params.minShips, params.maxShips)
   spaceships = []
   for (let i = 0; i < maxShips; i++) {
     spaceships.push(new Spaceship())
   }
 }
 function createAsteroids () {
-  maxAsteroids = random(30, 70)
+  maxAsteroids = random(params.minAsteroids, params.maxAsteroids)
   asteroids = []
   for (let i = 0; i < maxAsteroids; i++) {
     asteroids.push(new Asteroid())
   }
 }
 function createRingworlds () {
-  maxRingworlds = random(5, 20)
+  maxRingworlds = random(params.minRings, params.maxRings)
   ringworlds = []
   for (let i = 0; i < maxRingworlds; i++) {
     ringworlds.push(new Ringworld())
   }
 }
 function createCityPlanets () {
-  maxCityPlanets = random(3, 8)
+  maxCityPlanets = random(params.minCities, params.maxCities)
   cityPlanets = []
   cityConnections = {}
   for (let i = 0; i < maxCityPlanets; i++) {
