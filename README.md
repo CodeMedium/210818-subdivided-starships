@@ -3,7 +3,9 @@
   <tr>
     <td width="50%"><img src="https://user-images.githubusercontent.com/89111078/130301628-1a74cc38-7d7a-405b-9980-1e88f4ff72ee.png"></td>
     <td width="50%"><img src="https://user-images.githubusercontent.com/89111078/130301556-ecab6244-73bc-436a-a363-cad485924558.gif" width="100%"></td>
-    <td width="50%"><img src="https://user-images.githubusercontent.com/89111078/130301556-ecab6244-73bc-436a-a363-cad485924558.gif" width="100%"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://user-images.githubusercontent.com/89111078/130850093-aa873196-23f5-4783-a54b-6894ee3bf546.gif" width="100%"></td>
   </tr>
 </table>
 
