@@ -1,6 +1,5 @@
 /**
- * Record
- * - This
+ * @see ccapture https://github.com/spite/ccapture.js/
  */
 const framerate = 30
 const timelimit = 20
